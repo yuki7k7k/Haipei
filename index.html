@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TEM Gallery - Haipei SHAO (Yuki)</title>
+    <style>
+        /* 全局样式和配色 */
+        :root {
+            --color-primary: #c1cfa2; /* 左侧背景色 */
+            --color-secondary: #ede8dc; /* 右侧背景色 */
+            --color-text-dark: #333;
+            --color-text-light: #fff;
+            --font-family-main: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-family-main);
+            color: var(--color-text-dark);
+            line-height: 1.6;
+            overflow-x: hidden; /* 防止横向滚动条 */
+        }
+
+        /* 布局容器 */
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* 左侧边栏 - 基本信息 */
+        .sidebar {
+            width: 20%;
+            background-color: var(--color-primary);
+            color: var(--color-text-dark);
+            padding: 40px 20px;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            transition: width 0.3s ease;
+            z-index: 10;
+        }
+
+        .sidebar h1 {
+            font-size: 2.0em;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+
+        .sidebar h2 {
+            font-size: 1.0em;
+            margin-bottom: 30px;
+            font-weight: 400;
+            opacity: 0.8;
+        }
+
+        .contact-info p {
+            margin-bottom: 10px;
+            font-size: 0.9em;
+        }
+
+        .contact-info a {
+            color: var(--color-text-dark);
+            text-decoration: none;
+            border-bottom: 1px solid rgba(51, 51, 51, 0.3);
+            transition: border-bottom 0.3s ease;
+        }
+
+        .contact-info a:hover {
+            border-bottom: 1px solid var(--color-text-dark);
+        }
+		
+		.about-justify {
+			text-align: justify;         /* make text evenly distributed */
+			text-justify: inter-word;    /* adjust spacing between words */
+		}
+
+		.about-justify::after {
+			content: "";
+			display: inline-block;
+			width: 100%;                 /* force last line to also justify */
+		}
+
+        /* 右侧主内容区 */
+        .main-content {
+            width: 80%;
+            margin-left: 20%; /* 留出左侧边栏的空间 */
+            background-color: var(--color-secondary);
+            padding: 40px;
+            transition: margin-left 0.3s ease, width 0.3s ease;
+        }
+
+        .gallery-title {
+            font-size: 2.4em;
+            font-weight: 100;
+            margin-bottom: 40px;
+            text-align: center;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeIn 1s ease-out forwards 0.5s;
+        }
+
+        .gallery {
+            /* 使用 CSS Columns 实现瀑布流布局 */
+            column-count: 4; /* PC端一行4个 */
+            column-gap: 30px;
+        }
+
+        /* 图片卡片样式 */
+        .card {
+            background-color: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            opacity: 0;
+            transform: translateY(30px);
+            animation: slideIn 0.6s ease-out forwards;
+            /* 瀑布流的关键设置 */
+            display: inline-block;
+            width: 100%;
+            margin-bottom: 30px; /* 模拟 Grid 的 gap */
+            break-inside: avoid; /* 防止卡片被分割 */
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-image {
+            width: 100%;
+            /* 移除固定高度，让图片自然撑开 */
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #f5f5f5;
+        }
+
+        .card-image img {
+            width: 100%;
+            /* 移除 height: 100% 和 object-fit: contain，让图片按原始比例完整显示 */
+            height: auto;
+            transition: transform 0.5s ease;
+        }
+
+        .card:hover .card-image img {
+            transform: scale(1.05);
+        }
+
+        .card-content {
+            padding: 15px;
+        }
+
+        .card-content h3 {
+            font-size: 1.1em;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: var(--color-primary);
+        }
+
+        .card-content p {
+            font-size: 0.85em;
+            color: #666;
+            margin-top: 10px; /* 增加描述和标题的间距 */
+        }
+		.desc-justify {
+			text-align: justify;
+			text-justify: inter-word;
+		}
+
+		.desc-justify::after {
+			content: "";
+			display: inline-block;
+			width: 100%; /* justify last line */
+		}
+
+
+        /* 动画效果 */
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* 媒体查询 - 手机自适应 */
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                position: relative;
+                width: 100%;
+                height: auto;
+                padding: 20px;
+            }
+
+            .main-content {
+                width: 100%;
+                margin-left: 0;
+                padding: 20px;
+            }
+
+            .gallery {
+                column-count: 1; /* 手机端一行1个 */
+            }
+
+            .gallery-title {
+                font-size: 2em;
+            }
+
+            .sidebar h1 {
+                font-size: 2em;
+            }
+
+            .sidebar h2 {
+                font-size: 1em;
+            }
+        }
+
+        /* 媒体查询 - 平板自适应 */
+        @media (min-width: 769px) and (max-width: 1200px) {
+            .gallery {
+                column-count: 2; /* 平板端一行2个 */
+            }
+        }
+
+        /* 延迟动画，实现页面打开的动态效果 */
+        .card:nth-child(1) { animation-delay: 0.1s; }
+        .card:nth-child(2) { animation-delay: 0.2s; }
+        .card:nth-child(3) { animation-delay: 0.3s; }
+        .card:nth-child(4) { animation-delay: 0.4s; }
+        .card:nth-child(5) { animation-delay: 0.5s; }
+        .card:nth-child(6) { animation-delay: 0.6s; }
+        .card:nth-child(7) { animation-delay: 0.7s; }
+        .card:nth-child(8) { animation-delay: 0.8s; }
+        .card:nth-child(9) { animation-delay: 0.9s; }
+        .card:nth-child(10) { animation-delay: 1.0s; }
+        .card:nth-child(11) { animation-delay: 1.1s; }
+        .card:nth-child(12) { animation-delay: 1.2s; }
+        .card:nth-child(13) { animation-delay: 1.3s; }
+        .card:nth-child(14) { animation-delay: 1.4s; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 左侧边栏：基本信息 -->
+        <aside class="sidebar">
+            <header>
+                <h1>Haipei SHAO (Yuki)</h1>
+                <h2>Ph.D. candidate at NUS.<br> Bachelor in Tsinghua University.</h2>
+            </header>
+
+            <section class="contact-info">
+                <h3>Contact me</h3>
+                <p>
+                    <span role="img" aria-label="Email">✉️</span> 
+                    <a href="mailto:haipei.shao@gmail.com">haipei.shao@gmail.com</a>
+                </p>
+                <p>
+                    <span role="img" aria-label="LinkedIn">🔗</span> 
+                    <a href="https://linkedin.com/in/shaohaipei" target="_blank">linkedin.com/in/shaohaipei</a>
+                </p>
+                <p>
+                    <span role="img" aria-label="Phone">☎️</span> 
+                    +65 8885 0994
+                </p>
+                <p style="margin-top: 20px; font-style: italic; opacity: 1;">
+                    🎓 Graduating in 2026 Fall, actively seeking opportunities in TEM-related positions.
+                </p>
+            </section>
+
+            <section style="margin-top: 40px;">
+                <h3>About me</h3>
+                <p style="font-size: 0.9em;">
+                    I am currently a PhD candidate specializing in transmission electron microscopy, dedicated to exploring atomic-level structures and properties of materials. I am also interested in the design principle of the microscope.
+                </p>
+            </section>
+        </aside>
+
+        <!-- 右侧主内容区：图片画廊 -->
+        <main class="main-content">
+            <h1 class="gallery-title">TEM Gallery</h1>
+            <div class="gallery">
+                <!-- 图片卡片将通过 JavaScript 动态插入，以确保排序和描述的准确性 -->
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // 图片数据（已根据文件名排序，并添加描述）
+        const imageData = [
+            { file: '1.png', title: 'COF Polycrystals', description: 'Low-dose HRTEM and iDPC-STEM images of an in situ-grown polyhedral COF thin film on a TEM grid, showing polycrystalline domains with distinct phases and topologies.<br><br><em>J. Am. Chem. Soc. 147, 32, 29130–29141 (2025)' },
+            { file: '2.png', title: 'COF Pore Channels', description: 'Low-dose HRTEM images of two porphyrin COFs at 300 kV with direct electron detector (Gatan K3 camera).<br><br><em>Nat. Mater. 24, 1245–1257 (2025)' },
+            { file: '3.png', title: 'MOF Zig-zag Columns', description: 'Low-dose HRTEM image of a MOF along perticular zone axis, image filtered with CRISP software.<br><br><em>Unpublished.' },
+            { file: '4.png', title: 'Single-atom Catalyst', description: 'STEM image of single Ni atom deposited on a C3N4 substrate.' },
+            { file: '5.jpg', title: 'Atomic EDS Mapping', description: 'Layered transition metal dichalcogenide (TMD) exhibits semiconducting behavior.<br><br><em>Unpublished' },
+            { file: '6.jpg', title: 'Oxygen Atom Imaging', description: 'STEM-iDPC for imaging light elements in ABO₃ lattice.' },
+            { file: '7.png', title: 'EELS Mapping', description: 'EELS mapping for semiconductors.' },
+            { file: '8.jpg', title: 'Single-atom EELS', description: 'Atomic EELS of dual-single-atom catalyst.<br><br><em>Unpublished.' },
+            { file: '9.png', title: 'Single-atom EELS', description: 'Atomic EELS of dual-single-atom catalyst.<br><br><em>Unpublished.' },
+            { file: '10.png', title: 'MicroED for MOF', description: 'MicroED analysis reveals two distinct Cu binding modes in the MOF: in-plane and out-of-plane coordination.' },
+            { file: '11.png', title: 'MicroED for MOF', description: 'MicroED analysis uncovers a porous structure in MOF, and the simulated PXRD pattern aligns well with experimental data.<br><br><em>Unpublished.' },
+            { file: '12.png', title: 'MicroED for 1D material', description: 'MicroED analysis identifies a metal doped 1D chain, verified by STEM imaging along the (010) and (001) zone axes.<br><br><em>Unpublished.' },
+            { file: '13.png', title: 'Atom Displacement', description: 'Customized coding for STEM data analysis, showing atom displacement in various lattice.' },
+            { file: '14.png', title: 'Feature detection', description: 'Customized coding for automatically detection of single atoms in STEM image.' },
+        ];
+
+        const gallery = document.querySelector('.gallery');
+
+        imageData.forEach((item, index) => {
+            const card = document.createElement('div');
+            card.className = 'card';
+            // 设置动画延迟，与 CSS 中的 nth-child 保持一致
+            card.style.animationDelay = `${(index + 1) * 0.1}s`;
+
+            card.innerHTML = `
+                <div class="card-image">
+                    <img src="assets/${item.file}" alt="${item.title}">
+                </div>
+                <div class="card-content">
+                    <h3>${item.title}</h3>
+                    <p>${item.description}</p>
+                </div>
+            `;
+            gallery.appendChild(card);
+        });
+
+        // 页面打开的动态效果：标题渐入
+        // 标题的动画已在 CSS 中实现：.gallery-title
+    </script>
+</body>
+</html>
